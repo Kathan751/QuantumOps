@@ -9,6 +9,8 @@ import { AdminLayout } from './components/AdminLayout';
 import { Departments } from './pages/admin/Departments';
 import { Categories } from './pages/admin/Categories';
 import { Employees } from './pages/admin/Employees';
+import { AssetDirectory } from './pages/AssetDirectory';
+import { AssetDetail } from './pages/AssetDetail';
 
 const queryClient = new QueryClient();
 
@@ -31,7 +33,13 @@ function Dashboard() {
           </div>
           <span className="text-xl font-bold tracking-tight text-white">AssetFlow</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
+          <Link
+            to="/assets"
+            className="text-xs font-semibold text-gray-400 hover:text-gray-200 transition"
+          >
+            Asset Directory
+          </Link>
           {user?.role === 'ADMIN' && (
             <Link
               to="/admin/departments"
@@ -104,6 +112,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/assets"
+        element={
+          <ProtectedRoute>
+            <AssetDirectory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/assets/:id"
+        element={
+          <ProtectedRoute>
+            <AssetDetail />
           </ProtectedRoute>
         }
       />

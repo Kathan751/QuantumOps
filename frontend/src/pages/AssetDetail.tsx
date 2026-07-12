@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import apiClient from '../api/client';
+import { useAuthStore } from '../store/authStore';
+import { AllocationForm } from '../components/AllocationForm';
+import { ReturnForm } from '../components/ReturnForm';
 
 interface Employee {
   id: number;
@@ -61,24 +64,29 @@ interface Asset {
 
 export const AssetDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuthStore();
   const [asset, setAsset] = useState<Asset | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'allocations' | 'maintenance'>('allocations');
 
+  // Modal actions state
+  const [allocationMode, setAllocationMode] = useState<'checkout' | 'assign' | null>(null);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+
+  const fetchAssetDetails = async () => {
+    setError(null);
+    try {
+      const response = await apiClient.get<Asset>(`/assets/${id}`);
+      setAsset(response.data);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load asset details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAssetDetails = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await apiClient.get<Asset>(`/assets/${id}`);
-        setAsset(response.data);
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to load asset details');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAssetDetails();
   }, [id]);
 
@@ -110,6 +118,13 @@ export const AssetDetail: React.FC = () => {
     );
   }
 
+  const activeAllocation = asset.allocations?.find((a) => a.status === 'ACTIVE');
+  const canReturn =
+    activeAllocation &&
+    (user?.role === 'ADMIN' ||
+      user?.role === 'ASSET_MANAGER' ||
+      activeAllocation.employeeId === user?.id);
+
   return (
     <div className="space-y-8 text-gray-100 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -121,19 +136,49 @@ export const AssetDetail: React.FC = () => {
           </div>
           <h1 className="text-3xl font-extrabold text-white mt-1 m-0">{asset.name}</h1>
         </div>
-        <span
-          className={`self-start sm:self-auto inline-flex rounded-full px-3 py-1 text-xs font-bold leading-5 border ${
-            asset.status === 'AVAILABLE'
-              ? 'bg-green-950/50 border-green-500/20 text-green-400'
-              : asset.status === 'ALLOCATED'
-              ? 'bg-blue-950/50 border-blue-500/20 text-blue-400'
-              : asset.status === 'UNDER_MAINTENANCE'
-              ? 'bg-amber-950/50 border-amber-500/20 text-amber-400'
-              : 'bg-red-950/50 border-red-500/20 text-red-400'
-          }`}
-        >
-          {asset.status.replace('_', ' ').toLowerCase()}
-        </span>
+        <div className="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+          {asset.status === 'AVAILABLE' && (
+            <>
+              <button
+                onClick={() => setAllocationMode('checkout')}
+                className="rounded-xl bg-purple-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-purple-500 cursor-pointer"
+              >
+                Check Out
+              </button>
+              {(user?.role === 'ADMIN' || user?.role === 'ASSET_MANAGER') && (
+                <button
+                  onClick={() => setAllocationMode('assign')}
+                  className="rounded-xl bg-purple-950 border border-purple-500/30 px-4 py-2 text-xs font-semibold text-purple-400 transition hover:bg-purple-900 cursor-pointer"
+                >
+                  Assign Asset
+                </button>
+              )}
+            </>
+          )}
+
+          {asset.status === 'ALLOCATED' && canReturn && (
+            <button
+              onClick={() => setShowReturnModal(true)}
+              className="rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-amber-500 cursor-pointer"
+            >
+              Return Asset
+            </button>
+          )}
+
+          <span
+            className={`inline-flex rounded-full px-3 py-1 text-xs font-bold leading-5 border ${
+              asset.status === 'AVAILABLE'
+                ? 'bg-green-950/50 border-green-500/20 text-green-400'
+                : asset.status === 'ALLOCATED'
+                ? 'bg-blue-950/50 border-blue-500/20 text-blue-400'
+                : asset.status === 'UNDER_MAINTENANCE'
+                ? 'bg-amber-950/50 border-amber-500/20 text-amber-400'
+                : 'bg-red-950/50 border-red-500/20 text-red-400'
+            }`}
+          >
+            {asset.status.replace('_', ' ').toLowerCase()}
+          </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -205,7 +250,7 @@ export const AssetDetail: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <span className="text-xs text-gray-500 block uppercase tracking-wider">QR Code Identifier</span>
-                <div className="mt-2 bg-white p-2.5 inline-block rounded-xl border border-gray-850">
+                <div className="mt-2 bg-white p-2.5 inline-block rounded-xl border border-gray-800">
                   <div className="h-28 w-28 bg-[#1f2937] flex flex-col items-center justify-center rounded-lg border border-purple-500/20 text-center p-2 text-white">
                     <p className="text-[10px] font-bold tracking-widest text-purple-400">QR CODE</p>
                     <p className="text-[8px] mt-1 break-all text-gray-400 font-mono select-all">{asset.qrCodeValue}</p>
@@ -373,6 +418,41 @@ export const AssetDetail: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Checkout/Assign Modal Backdrop */}
+      {allocationMode && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/70 p-4 backdrop-blur-sm">
+          <div className="glass max-w-lg w-full rounded-2xl p-6 shadow-2xl relative border border-gray-800">
+            <AllocationForm
+              assetId={asset.id}
+              assetName={asset.name}
+              mode={allocationMode}
+              onClose={() => setAllocationMode(null)}
+              onSuccess={() => {
+                setAllocationMode(null);
+                fetchAssetDetails();
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Return Modal Backdrop */}
+      {showReturnModal && activeAllocation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/70 p-4 backdrop-blur-sm">
+          <div className="glass max-w-lg w-full rounded-2xl p-6 shadow-2xl relative border border-gray-800">
+            <ReturnForm
+              allocationId={activeAllocation.id}
+              assetName={asset.name}
+              onClose={() => setShowReturnModal(false)}
+              onSuccess={() => {
+                setShowReturnModal(false);
+                fetchAssetDetails();
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

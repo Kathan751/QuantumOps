@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Global styles and base reset extensions */
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #0b0f19; /* Premium dark background */
+  color: #f3f4f6;
+  min-height: 100vh;
+}
+
+/* Glassmorphism utility variables/classes in Tailwind v4 can use native css */
+.glass {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

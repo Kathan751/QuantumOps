@@ -1,17 +1,63 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Global styles and base reset extensions */
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #0b0f19; /* Premium dark background */
-  color: #f3f4f6;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(37, 99, 235, 0.24), transparent 28rem),
+    radial-gradient(circle at 85% 5%, rgba(14, 165, 233, 0.18), transparent 30rem),
+    radial-gradient(circle at 80% 75%, rgba(124, 58, 237, 0.12), transparent 26rem),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.04), transparent 40%),
+    #f8fafc;
+  color: #0f172a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* Glassmorphism utility variables/classes in Tailwind v4 can use native css */
 .glass {
-  background: rgba(17, 24, 39, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(22px) saturate(135%);
+}
+
+.command-grid {
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.aurora-border {
+  position: relative;
+}
+
+.aurora-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.75), rgba(6, 182, 212, 0.35), rgba(124, 58, 237, 0.55));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.soft-glow {
+  box-shadow: 0 24px 80px rgba(37, 99, 235, 0.16), 0 8px 28px rgba(15, 23, 42, 0.08);
+}
+
+.lift {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 90px rgba(37, 99, 235, 0.18), 0 14px 32px rgba(15, 23, 42, 0.10);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }

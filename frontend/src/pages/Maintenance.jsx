@@ -1,0 +1,13 @@
+import { useState } from 'react';
+import { assetApi, workflowApi } from '../services/api.js';
+import { useAsyncData } from '../hooks/useAsyncData.js';
+import { Button, Card, Field, PageHeader, Select, SimpleTable, StatusBadge, Textarea } from '../components/ui.jsx';
+
+export default function Maintenance() {
+  const { data: requests = [], refresh } = useAsyncData(workflowApi.maintenance, [], 0, []);
+  const { data: assets = [] } = useAsyncData(() => assetApi.list(), [], 0, []);
+  const [form, setForm] = useState({ assetId: '', issueDescription: '', priority: 'MEDIUM' });
+  async function submit(e) { e.preventDefault(); await workflowApi.createMaintenance(form); setForm({ assetId: '', issueDescription: '', priority: 'MEDIUM' }); refresh(); }
+  function action(id, name, body) { return workflowApi.transitionMaintenance(id, name, body).then(refresh); }
+  return <div className="grid gap-6"><PageHeader eyebrow="Maintenance Desk" title="Maintenance Management" description="Requests require approval before technicians can start work, keeping lifecycle state accurate." /><Card><form onSubmit={submit} className="grid gap-3"><Field label="Asset"><Select required value={form.assetId} onChange={(e) => setForm({ ...form, assetId: e.target.value })}><option value="">Select</option>{assets.map((a) => <option key={a.id} value={a.id}>{a.tag} · {a.name}</option>)}</Select></Field><Field label="Issue description"><Textarea required value={form.issueDescription} onChange={(e) => setForm({ ...form, issueDescription: e.target.value })} /></Field><Field label="Priority"><Select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}><option>LOW</option><option>MEDIUM</option><option>HIGH</option></Select></Field><Button>Raise Request</Button></form></Card><Card><SimpleTable columns={[{ key: 'asset', label: 'Asset', render: (r) => r.asset?.name }, { key: 'issueDescription', label: 'Issue' }, { key: 'priority', label: 'Priority' }, { key: 'status', label: 'Status', render: (r) => <StatusBadge value={r.status} /> }]} rows={requests} renderActions={(r) => <div className="flex flex-wrap justify-end gap-2"><Button variant="secondary" onClick={() => action(r.id, 'approve')}>Approve</Button><Button variant="secondary" onClick={() => action(r.id, 'assign', { technicianName: 'Demo Technician' })}>Assign</Button><Button variant="secondary" onClick={() => action(r.id, 'start')}>Start</Button><Button onClick={() => action(r.id, 'resolve')}>Resolve</Button><Button variant="danger" onClick={() => action(r.id, 'reject', { rejectionReason: 'Insufficient information' })}>Reject</Button></div>} /></Card></div>;
+}

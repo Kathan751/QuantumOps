@@ -129,7 +129,7 @@ async function main() {
     await prisma.activityLog.create({ data: { actorUserId: i % 2 ? manager.id : admin.id, action: ['SEED_ASSET_CREATED', 'SEED_BOOKING_CREATED', 'SEED_AUDIT_CREATED'][i % 3], entityType: 'SeedData', entityId: i + 1, afterState: { demo: true, index: i } } });
   }
 
-  console.log('AssetFlow seeded.');
+  console.log('QuantumOps seeded.');
   console.log('Demo users: admin@assetflow.demo, manager@assetflow.demo, depthead@assetflow.demo, employee@assetflow.demo');
   console.log('Password for all demo users: Password123!');
 }

@@ -1,6 +1,6 @@
 # QuantumOps
 
-QunatumOps is a demo-ready Enterprise Asset & Resource Management System for the Odoo. It manages asset lifecycle, allocation and transfers, conflict-free shared resource bookings, maintenance approvals, audit cycles, notifications, logs, dashboards, and analytics.
+QuantumOps is a demo-ready Enterprise Asset & Resource Management System for the Odoo Hackathon 2026. It manages asset lifecycle, allocation and transfers, conflict-free shared resource bookings, maintenance approvals, audit cycles, notifications, logs, dashboards, and analytics.
 
 ## Stack
 
@@ -58,3 +58,9 @@ All users use password `Password123!`.
 - Maintenance approval-before-work workflow
 - Structured audit cycles with locked closure
 - Role-scoped dashboard KPIs, reports, notifications, and activity logs
+
+## Partial / demo stubs
+
+- Forgot password generates a demo reset token in backend logs; email delivery is not configured.
+- QR scanning is omitted; asset tag and serial search cover the demo workflow.
+- Reports are interactive in-app summaries; CSV export is omitted.

@@ -9,7 +9,7 @@ export default function OrganizationSetup() {
   const { data: categories = [], refresh: refreshCats } = useAsyncData(orgApi.categories, [], 0, []);
   const { data: users = [], refresh: refreshUsers } = useAsyncData(orgApi.users, [], 0, []);
   return <div className="grid gap-6">
-    <PageHeader eyebrow="Admin Workspace" title="Organization Setup" description="Manage departments, reusable asset categories, and the only approved role-promotion surface in AssetFlow." />
+    <PageHeader eyebrow="Admin Workspace" title="Organization Setup" description="Manage departments, reusable asset categories, and the only approved role-promotion surface in QuantumOps." />
     <Toolbar>{['departments', 'categories', 'employees'].map((t) => <Button key={t} variant={tab === t ? 'primary' : 'secondary'} onClick={() => setTab(t)}>{t}</Button>)}</Toolbar>
     {tab === 'departments' && <Departments departments={departments} users={users} refresh={refreshDepts} />}
     {tab === 'categories' && <Categories categories={categories} refresh={refreshCats} />}

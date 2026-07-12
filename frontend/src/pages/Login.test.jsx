@@ -14,13 +14,14 @@ describe('advanced login page presentation', () => {
   it('renders the command-center auth frame with operational trust cues', () => {
     const html = renderToString(
       <MemoryRouter>
-        <AuthFrame title="Welcome back" subtitle="Sign in to your AssetFlow control center">
+        <AuthFrame title="Welcome back" subtitle="Sign in to your QuantumOps control center">
           <p>Login form placeholder</p>
         </AuthFrame>
       </MemoryRouter>
     );
 
-    expect(html).toContain('AssetFlow');
+    expect(html).toContain('QuantumOps');
+    expect(html).not.toContain('AssetFlow');
     expect(html).toContain('Command Center');
     expect(html).toContain('RBAC secured');
     expect(html).toContain('Audit-ready');
@@ -60,4 +61,8 @@ it('renders all demo role shortcuts from the real Login component', () => {
   expect(html).toContain('depthead@assetflow.demo');
   expect(html).toContain('employee@assetflow.demo');
   expect(html).toContain('Enter command center');
+
+  // Focused assertions for QuantumOps brand rename
+  expect(html).toContain('QO');
+  expect(html).not.toContain('>AF<');
 });

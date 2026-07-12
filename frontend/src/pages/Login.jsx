@@ -71,7 +71,7 @@ export default function Login() {
   }
 
   return (
-    <AuthFrame title="Welcome back" subtitle="Sign in to your AssetFlow control center">
+    <AuthFrame title="Welcome back" subtitle="Sign in to your QuantumOps control center">
       <form onSubmit={submit} className="grid gap-4">
         <InlineError>{error}</InlineError>
         <Field label="Email">
@@ -132,9 +132,9 @@ export function AuthFrame({ title, subtitle, children, mode = 'login' }) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(34,211,238,0.22),transparent_26rem),radial-gradient(circle_at_85%_15%,rgba(37,99,235,0.22),transparent_24rem)]" />
           <div className="relative z-10">
             <div className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-2 shadow-lg shadow-blue-950/30 backdrop-blur">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-cyan-400 text-sm font-black text-white">AF</span>
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-cyan-400 text-sm font-black text-white">QO</span>
               <div>
-                <p className="text-sm font-black leading-none">AssetFlow</p>
+                <p className="text-sm font-black leading-none">QuantumOps</p>
                 <p className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-cyan-200">Command Center</p>
               </div>
             </div>
@@ -168,7 +168,7 @@ export function AuthFrame({ title, subtitle, children, mode = 'login' }) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.16),transparent_24rem),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.13),transparent_24rem)]" />
           <div className="aurora-border glass relative z-10 w-full max-w-xl rounded-[2rem] border border-white/80 bg-white/86 p-6 shadow-soft ring-1 ring-slate-900/5 backdrop-blur-2xl sm:p-8">
             <div className="mb-7">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-brand-600">{mode === 'login' ? 'Secure access' : 'AssetFlow access'}</p>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-brand-600">{mode === 'login' ? 'Secure access' : 'QuantumOps access'}</p>
               <h2 className="mt-2 text-4xl font-black tracking-tight text-slate-950">{title}</h2>
               <p className="mt-2 text-sm leading-6 text-slate-500">{subtitle}</p>
             </div>

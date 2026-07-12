@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import assert from 'assert';
+import request from 'supertest';
+import { app } from '../app.js';
 
-describe('AssetFlow business rules', () => {
+describe('QuantumOps business rules', () => {
+  it('health endpoint exposes QuantumOps API display name', async () => {
+    const response = await request(app).get('/api/health').expect(200);
+
+    assert.deepEqual(response.body, { ok: true, name: 'QuantumOps API' });
+  });
+
   it('signup always creates an Employee role', async () => {
     const { normalizeSignupRole } = await import('../services/auth.service.js');
     expect(normalizeSignupRole('ADMIN')).toBe('EMPLOYEE');

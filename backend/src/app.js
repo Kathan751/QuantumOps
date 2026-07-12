@@ -21,7 +21,7 @@ export const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL || true, credentials: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')));
-app.get('/api/health', (req, res) => res.json({ ok: true, name: 'AssetFlow API' }));
+app.get('/api/health', (req, res) => res.json({ ok: true, name: 'QuantumOps API' }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/org', orgRoutes);

@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
+import { AdminLayout } from './components/AdminLayout';
+import { Departments } from './pages/admin/Departments';
+import { Categories } from './pages/admin/Categories';
+import { Employees } from './pages/admin/Employees';
 
 const queryClient = new QueryClient();
 
@@ -28,6 +32,14 @@ function Dashboard() {
           <span className="text-xl font-bold tracking-tight text-white">AssetFlow</span>
         </div>
         <div className="flex items-center gap-4">
+          {user?.role === 'ADMIN' && (
+            <Link
+              to="/admin/departments"
+              className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-purple-500 cursor-pointer"
+            >
+              Admin Controls
+            </Link>
+          )}
           <div className="text-right">
             <p className="text-sm font-semibold text-gray-200">{user?.name}</p>
             <p className="text-xs text-purple-400 capitalize">{user?.role?.replace('_', ' ')?.toLowerCase()}</p>
@@ -95,6 +107,12 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route path="departments" element={<Departments />} />
+        <Route path="categories" element={<Categories />} />
+        <Route path="employees" element={<Employees />} />
+        <Route path="" element={<Navigate to="departments" replace />} />
+      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
